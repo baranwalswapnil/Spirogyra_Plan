@@ -1,0 +1,23 @@
+.custom-cursor {
+    display: none;
+}
+
+.cursor-trail {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    font-size: 20px;
+    animation: trail-fade 1s ease-out forwards;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes trail-fade {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -20px) scale(0.5);
+    }
+}

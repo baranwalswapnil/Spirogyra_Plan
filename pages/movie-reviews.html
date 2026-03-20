@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Reviews - Spirogyraplan</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/cursor.css">
+    <link rel="stylesheet" href="../styles/festival.css">
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="cursor"></div>
+
+    <!-- Festival Popup Modal -->
+    <div id="festival-popup" class="festival-modal">
+        <div class="modal-content">
+            <span class="modal-emoji" id="modalEmoji">🎉</span>
+            <h2 class="modal-title" id="modalTitle">Festival Name</h2>
+            <p class="modal-date" id="modalDate">Dates go here</p>
+            <p style="margin-bottom: 20px; color: #555;">Welcome to the festival theme! Enjoy the vibe!</p>
+            <button class="close-btn" onclick="closePopup()">Let's Celebrate! 🚀</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Spirogyraplan</h1>
+            
+            <div class="social-container">
+                <div class="social-group">
+                    <h3>YouTube</h3>
+                    <div class="social-links">
+                        <a href="https://www.youtube.com/@Swapnilbaranwallive" target="_blank" title="Swapnil Baranwal Live">
+                            <svg fill="#FF0000" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        </a>
+                        <a href="https://www.youtube.com/@Spirogyraplan" target="_blank" title="Spirogyraplan">
+                            <svg fill="#FF0000" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="social-group">
+                    <h3>Instagram</h3>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/baranwalswapnil_" target="_blank" title="@baranwalswapnil_">
+                            <svg fill="url(#instagram-gradient)" viewBox="0 0 24 24">
+                                <defs>
+                                    <linearGradient id="instagram-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#f09433;stop-opacity:1" />
+                                        <stop offset="25%" style="stop-color:#e6683c;stop-opacity:1" />
+                                        <stop offset="50%" style="stop-color:#dc2743;stop-opacity:1" />
+                                        <stop offset="75%" style="stop-color:#cc2366;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#bc1888;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                        
+                        <a href="https://www.instagram.com/ldhiq" target="_blank" title="@ldhiq">
+                            <svg fill="url(#instagram-gradient2)" viewBox="0 0 24 24">
+                                <defs>
+                                    <linearGradient id="instagram-gradient2" x1="0%" y1="100%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#f09433;stop-opacity:1" />
+                                        <stop offset="25%" style="stop-color:#e6683c;stop-opacity:1" />
+                                        <stop offset="50%" style="stop-color:#dc2743;stop-opacity:1" />
+                                        <stop offset="75%" style="stop-color:#cc2366;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#bc1888;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Movie Reviews Page -->
+        <section>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px;">
+                <a href="../index.html" class="back-btn" style="margin-bottom: 0;">← Back to Home</a>
+                
+                <!-- Search Bar -->
+                <div class="search-wrapper" style="margin-bottom: 0; flex: 1; max-width: 400px;">
+                    <input type="text" id="movieSearch" class="search-input" placeholder="🔍  Search movies... e.g. Border, Dhurandhar" autocomplete="off" style="border: 2px solid #00bfff; background-color: #e6f7ff; color: #005f8e; box-shadow: 0 4px 10px rgba(0, 191, 255, 0.2);">
+                    <span class="search-icon">🎬</span>
+                    <div class="suggestions-box" id="suggestionsBox"></div>
+                </div>
+            </div>
+            
+            <h2 style="margin-top: 0;">🎬 Movie Reviews</h2>
+            <div class="item-grid" id="movieGrid">
+                <div class="movie-card" data-title="Dhurandhar Part 2">
+                    <img src="https://m.media-amazon.com/images/M/MV5BNDhjNThiMjQtNTc0ZS00MjAxLTgyODItNDFkZjI5YjU0MDJhXkEyXkFqcGc@._V1_FMjpg_UY1973_.jpg" alt="Dhurandhar Part 2">
+                    <div class="movie-info">
+                        <h3>Dhurandhar Part 2</h3>
+                        <div class="star-rating">
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star half">★</span>
+                        </div>
+                        <p>Brief review or description of the movie</p>
+                        <a href="https://www.youtube.com/@Spirogyraplan" target="_blank">🎥 Watch Review</a>
+                    </div>
+                </div>
+
+                <div class="movie-card" data-title="Happy Patel">
+                    <img src="https://m.media-amazon.com/images/M/MV5BZTFmNzZmMDAtMzcyYy00ODE4LWE4MzUtNmUyZWI1YTFlMDVmXkEyXkFqcGc@._V1_.jpg" alt="Happy Patel">
+                    <div class="movie-info">
+                        <h3>Happy Patel</h3>
+                        <div class="star-rating">
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star half">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>Brief review or description of the movie</p>
+                        <a href="https://www.youtube.com/@Spirogyraplan" target="_blank">🎥 Watch Review</a>
+                    </div>
+                </div>
+
+                <div class="movie-card" data-title="Border 2">
+                    <img src="https://m.media-amazon.com/images/M/MV5BODRiNGY1MzgtM2U5NS00MWU4LThlNTItOGM1YjFmOWVmMTU5XkEyXkFqcGc@._V1_FMjpg_UY2500_.jpg" alt="Border 2">
+                    <div class="movie-info">
+                        <h3>Border 2</h3>
+                        <div class="star-rating">
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>Brief review or description of the movie</p>
+                        <a href="https://www.youtube.com/@Spirogyraplan" target="_blank">🎥 Watch Review</a>
+                    </div>
+                </div>
+
+                <div class="movie-card" data-title="Dhurandhar">
+                    <img src="https://m.media-amazon.com/images/M/MV5BMzJhMzQ0MGItMWIxOC00NzkwLWJkNDktYjgyZGMwN2U2ZDEwXkEyXkFqcGc@._V1_.jpg" alt="Dhurandhar">
+                    <div class="movie-info">
+                        <h3>Dhurandhar</h3>
+                        <div class="star-rating">
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star half">★</span>
+                        </div>
+                        <p>Brief review or description of the movie</p>
+                        <a href="https://www.youtube.com/@Spirogyraplan" target="_blank">🎥 Watch Review</a>
+                    </div>
+                </div>
+
+                <div class="movie-card" data-title="Movie Title 5">
+                    <img src="https://via.placeholder.com/300x200/a8edea/333333?text=Movie+5" alt="Movie 5">
+                    <div class="movie-info">
+                        <h3>Movie Title 5</h3>
+                        <div class="star-rating">
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>Brief review or description of the movie</p>
+                        <a href="https://www.youtube.com/@Spirogyraplan" target="_blank">🎥 Watch Review</a>
+                    </div>
+                </div>
+
+                <div class="movie-card" data-title="Movie Title 6">
+                    <img src="https://via.placeholder.com/300x200/fed6e3/333333?text=Movie+6" alt="Movie 6">
+                    <div class="movie-info">
+                        <h3>Movie Title 6</h3>
+                        <div class="star-rating">
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                        </div>
+                        <p>Brief review or description of the movie</p>
+                        <a href="https://www.youtube.com/@Spirogyraplan" target="_blank">🎥 Watch Review</a>
+                    </div>
+                </div>
+            </div>
+
+            <!--
+            ═══════════════════════════════════════════════════════
+            📋 TEMPLATE — Copy-paste this block to add a new movie
+            ═══════════════════════════════════════════════════════
+
+                <div class="movie-card">
+                    <img src="POSTER_URL" alt="Movie Name">
+                    <div class="movie-info">
+                        <h3>Movie Name</h3>
+
+                        STAR RATING — use filled / half / empty:
+                        <div class="star-rating">
+                            <span class="star filled">★</span>   ← gold filled
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star half">★</span>    ← half gold, half grey
+                            <span class="star">★</span>          ← empty grey
+                        </div>
+
+                        Example ratings:
+                          5/5  → 5 filled, 0 half, 0 empty
+                          4.5  → 4 filled, 1 half, 0 empty
+                          4/5  → 4 filled, 0 half, 1 empty
+                          3.5  → 3 filled, 1 half, 1 empty
+                          3/5  → 3 filled, 0 half, 2 empty
+
+                        <p>Your short review text here.</p>
+                        <a href="YOUR_YOUTUBE_REVIEW_LINK" target="_blank">🎥 Watch Review</a>
+                    </div>
+                </div>
+
+            The search bar picks up the title from <h3> automatically.
+            No extra attributes needed!
+            ═══════════════════════════════════════════════════════
+            -->
+            <div class="no-results" id="noResults">😕 No movies found matching your search.</div>
+        </section>
+
+        <footer>
+            <p>© 2024 Spirogyraplan - Swapnil Baranwal | Made with ❤️ and 🌈</p>
+        </footer>
+    </div>
+
+    <script src="../js/cursor.js"></script>
+    <script src="../js/festival.js"></script>
+    <script>
+    (function() {
+        const input       = document.getElementById('movieSearch');
+        const box         = document.getElementById('suggestionsBox');
+        const grid        = document.getElementById('movieGrid');
+        const noResults   = document.getElementById('noResults');
+        const cards       = Array.from(grid.querySelectorAll('.movie-card'));
+
+        // Title read from data-title OR h3 text — no manual attribute needed for new cards
+        const movies = cards.map(c => ({
+            card: c,
+            title: c.dataset.title || (c.querySelector('h3') ? c.querySelector('h3').textContent.trim() : '')
+        }));
+
+        let activeIdx = -1;
+
+        // Score how well query matches title (subsequence + position bonus)
+        function score(title, query) {
+            const t = title.toLowerCase();
+            const q = query.toLowerCase().trim();
+            if (!q) return 0;
+            // Exact prefix → highest
+            if (t.startsWith(q)) return 1000 - t.indexOf(q);
+            // Substring match
+            const idx = t.indexOf(q);
+            if (idx !== -1) return 500 - idx;
+            // Subsequence match: every char of query must appear in order
+            let ti = 0, qi = 0, consecutive = 0;
+            while (ti < t.length && qi < q.length) {
+                if (t[ti] === q[qi]) { qi++; consecutive++; }
+                ti++;
+            }
+            if (qi === q.length) return consecutive * 10;
+            return -1; // no match
+        }
+
+        // Highlight matched chars in title
+        function highlight(title, query) {
+            const q = query.toLowerCase().trim();
+            if (!q) return title;
+            // Try substring highlight first
+            const idx = title.toLowerCase().indexOf(q);
+            if (idx !== -1) {
+                return title.slice(0, idx)
+                    + '<mark>' + title.slice(idx, idx + q.length) + '</mark>'
+                    + title.slice(idx + q.length);
+            }
+            // Subsequence highlight
+            let result = '', qi = 0;
+            for (let i = 0; i < title.length; i++) {
+                if (qi < q.length && title[i].toLowerCase() === q[qi]) {
+                    result += '<mark>' + title[i] + '</mark>';
+                    qi++;
+                } else {
+                    result += title[i];
+                }
+            }
+            return result;
+        }
+
+        function closeSuggestions() {
+            box.style.display = 'none';
+            box.innerHTML = '';
+            activeIdx = -1;
+        }
+
+        function selectSuggestion(title) {
+            input.value = title;
+            closeSuggestions();
+            filterCards(title);
+            // Scroll to the matching card
+            const match = movies.find(m => m.title.toLowerCase() === title.toLowerCase());
+            if (match) match.card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function filterCards(query) {
+            const q = query.toLowerCase().trim();
+            let visible = 0;
+            movies.forEach(({ card, title }) => {
+                const s = score(title, q);
+                if (!q || s >= 0) {
+                    card.classList.remove('hidden');
+                    visible++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            noResults.style.display = (visible === 0 && q) ? 'block' : 'none';
+        }
+
+        input.addEventListener('input', function() {
+            const q = this.value.trim();
+            filterCards(q);
+
+            if (!q) { closeSuggestions(); return; }
+
+            // Score & sort suggestions
+            const ranked = movies
+                .map(m => ({ title: m.title, s: score(m.title, q) }))
+                .filter(m => m.s >= 0)
+                .sort((a, b) => b.s - a.s);
+
+            if (!ranked.length) { closeSuggestions(); return; }
+
+            box.innerHTML = ranked.map((m, i) =>
+                `<div class="suggestion-item" data-idx="${i}" data-title="${m.title}">
+                    🎬 ${highlight(m.title, q)}
+                </div>`
+            ).join('');
+
+            box.querySelectorAll('.suggestion-item').forEach(el => {
+                el.addEventListener('mousedown', e => {
+                    e.preventDefault();
+                    selectSuggestion(el.dataset.title);
+                });
+            });
+
+            box.style.display = 'block';
+            activeIdx = -1;
+        });
+
+        // Keyboard navigation
+        input.addEventListener('keydown', function(e) {
+            const items = box.querySelectorAll('.suggestion-item');
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeIdx = Math.min(activeIdx + 1, items.length - 1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeIdx = Math.max(activeIdx - 1, -1);
+            } else if (e.key === 'Enter') {
+                if (activeIdx >= 0 && items[activeIdx]) {
+                    selectSuggestion(items[activeIdx].dataset.title);
+                } else {
+                    closeSuggestions();
+                }
+                return;
+            } else if (e.key === 'Escape') {
+                closeSuggestions();
+                return;
+            } else { return; }
+            items.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
+            if (items[activeIdx]) items[activeIdx].scrollIntoView({ block: 'nearest' });
+        });
+
+        // Clear search on input clear
+        input.addEventListener('search', () => {
+            if (!input.value) { filterCards(''); closeSuggestions(); }
+        });
+
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.search-wrapper')) closeSuggestions();
+        });
+    })();
+    </script>
+</body>
+</html>

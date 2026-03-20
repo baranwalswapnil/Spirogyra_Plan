@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Resources - OTP Protected - Spirogyraplan</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/cursor.css">
+    <link rel="stylesheet" href="../styles/festival.css">
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <style>
+        /* OTP Modal Styles */
+        .otp-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10002;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .otp-modal.active {
+            display: flex;
+        }
+        .otp-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+            position: relative;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .otp-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+        .otp-close:hover { color: #333; }
+        .otp-header { text-align: center; margin-bottom: 30px; }
+        .otp-header h2 { color: #667eea; font-size: 1.8em; margin-bottom: 10px; }
+        .otp-header p { color: #666; font-size: 0.95em; }
+        .otp-step { display: none; }
+        .otp-step.active { display: block; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus { outline: none; border-color: #667eea; }
+        .otp-inputs { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+        .otp-inputs input {
+            width: 50px;
+            height: 55px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        .otp-inputs input:focus { border-color: #667eea; transform: scale(1.05); }
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin-top: 10px;
+        }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .timer { text-align: center; margin: 15px 0; color: #666; font-size: 0.9em; }
+        .timer.expired { color: #e74c3c; }
+        .resend-link { text-align: center; margin-top: 15px; }
+        .resend-link button {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: underline;
+        }
+        .resend-link button:disabled { color: #ccc; cursor: not-allowed; text-decoration: none; }
+        .alert { padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .success-icon { text-align: center; font-size: 60px; margin: 20px 0; }
+        .download-info {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        .download-info p { margin: 5px 0; color: #666; }
+
+        /* Resource type badges */
+        .resource-badge {
+            display: inline-block;
+            font-size: 0.72em;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .excel-badge { background: #e6f4ea; color: #1e7e34; border: 1px solid #a8d5b5; }
+        .pdf-badge   { background: #fdecea; color: #c0392b; border: 1px solid #f5b7b1; }
+        .top1-badge  { background: #2a2a2a; color: #d4d4d4; border: 1px solid #555; }
+
+        /* Top 1% special card */
+        .resource-card.top1-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 40%, #424242 70%, #616161 100%);
+            color: #f0f0f0;
+            border: 1px solid #555;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .resource-card.top1-card h3 { color: #ffffff; }
+        .resource-card.top1-card p  { color: #bdbdbd; }
+        .resource-card.top1-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.6), 0 0 0 2px #888;
+        }
+        .resource-card.top1-card .download-btn {
+            background: linear-gradient(135deg, #424242 0%, #757575 100%);
+            color: #fff;
+            border: 1px solid #999;
+        }
+        .resource-card.top1-card .download-btn:hover {
+            background: linear-gradient(135deg, #616161 0%, #9e9e9e 100%);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor" id="cursor"></div>
+    
+    <div id="otpModal" class="otp-modal">
+        <div class="otp-content">
+            <button class="otp-close" onclick="closeOTPModal()">&times;</button>
+            
+            <div id="emailStep" class="otp-step active">
+                <div class="otp-header">
+                    <h2>📧 Verify Your Email</h2>
+                    <p>Enter your email to receive a verification code</p>
+                </div>
+                
+                <div id="emailAlert"></div>
+                
+                <div class="form-group">
+                    <label for="userEmail">Email Address</label>
+                    <input type="email" id="userEmail" placeholder="your.email@example.com" required>
+                </div>
+                
+                <button class="btn-primary" onclick="handleSendClick()" id="sendOTPBtn">
+                    Send Verification Code
+                </button>
+            </div>
+
+            <div id="otpStep" class="otp-step">
+                <div class="otp-header">
+                    <h2>🔐 Enter Verification Code</h2>
+                    <p>We sent a 6-digit code to <strong id="displayEmail"></strong></p>
+                </div>
+                
+                <div id="otpAlert"></div>
+                
+                <div class="otp-inputs">
+                    <input type="text" maxlength="1" class="otp-digit" data-index="0">
+                    <input type="text" maxlength="1" class="otp-digit" data-index="1">
+                    <input type="text" maxlength="1" class="otp-digit" data-index="2">
+                    <input type="text" maxlength="1" class="otp-digit" data-index="3">
+                    <input type="text" maxlength="1" class="otp-digit" data-index="4">
+                    <input type="text" maxlength="1" class="otp-digit" data-index="5">
+                </div>
+                
+                <div class="timer" id="otpTimer">
+                    Code expires in: <strong id="timerDisplay">05:00</strong>
+                </div>
+                
+                <button class="btn-primary" onclick="verifyOTP()" id="verifyOTPBtn">
+                    Verify & Download
+                </button>
+                
+                <div class="resend-link">
+                    <button onclick="resendOTP()" id="resendBtn" disabled>
+                        Resend Code (<span id="resendTimer">60</span>s)
+                    </button>
+                </div>
+            </div>
+
+            <div id="successStep" class="otp-step">
+                <div class="success-icon">✅</div>
+                <div class="otp-header">
+                    <h2>Success!</h2>
+                    <p>Your download will start automatically</p>
+                </div>
+                
+                <div class="download-info" id="downloadInfo">
+                    <p><strong>Resource:</strong> <span id="resourceName"></span></p>
+                    <p>Your session is active for the next 30 days</p>
+                </div>
+                
+                <button class="btn-primary" onclick="closeOTPModal()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Spirogyraplan</h1>
+            <div class="social-container">
+                <div class="social-group">
+                    <h3>YouTube</h3>
+                    <div class="social-links">
+                        <a href="https://www.youtube.com/@Swapnilbaranwallive" target="_blank" title="Swapnil Baranwal Live">
+                            <svg fill="#FF0000" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        </a>
+                        <a href="https://www.youtube.com/@Spirogyraplan" target="_blank" title="Spirogyraplan">
+                            <svg fill="#FF0000" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="social-group">
+                    <h3>Instagram</h3>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/baranwalswapnil_" target="_blank" title="@baranwalswapnil_">
+                            <svg fill="url(#res-ig-gradient1)" viewBox="0 0 24 24">
+                                <defs>
+                                    <linearGradient id="res-ig-gradient1" x1="0%" y1="100%" x2="100%" y2="0%">
+                                        <stop offset="0%"   style="stop-color:#f09433;stop-opacity:1" />
+                                        <stop offset="25%"  style="stop-color:#e6683c;stop-opacity:1" />
+                                        <stop offset="50%"  style="stop-color:#dc2743;stop-opacity:1" />
+                                        <stop offset="75%"  style="stop-color:#cc2366;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#bc1888;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+
+                        <a href="https://www.instagram.com/ldhiq" target="_blank" title="@ldhiq">
+                            <svg fill="url(#res-ig-gradient2)" viewBox="0 0 24 24">
+                                <defs>
+                                    <linearGradient id="res-ig-gradient2" x1="0%" y1="100%" x2="100%" y2="0%">
+                                        <stop offset="0%"   style="stop-color:#f09433;stop-opacity:1" />
+                                        <stop offset="25%"  style="stop-color:#e6683c;stop-opacity:1" />
+                                        <stop offset="50%"  style="stop-color:#dc2743;stop-opacity:1" />
+                                        <stop offset="75%"  style="stop-color:#cc2366;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#bc1888;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section>
+            <a href="../index.html" class="back-btn">← Back to Home</a>
+            <h2>📚 Free Resources</h2>
+            <p>Free templates and tools to help you grow (Protected with OTP verification):</p>
+            
+            <div class="resource-grid">
+                <div class="resource-card top1-card">
+                    <h3>🏆 Top 1%</h3>
+                    <p>Unlock the mindset, habits, and strategies that separate the top 1% from the rest — a visual guide to elite performance</p>
+                    <span class="resource-badge top1-badge">IMAGE</span>
+                    <button class="download-btn" onclick="initiateDownload('Top 1%', 'top-1%.jpg')">
+                        ⬇️ Download Image
+                    </button>
+                </div>
+
+                <div class="resource-card">
+                    <h3>✅ Habit Tracker</h3>
+                    <p>Printable PDF habit tracker to build and monitor your daily habits — stay consistent and achieve your goals</p>
+                    <span class="resource-badge pdf-badge">PDF</span>
+                    <button class="download-btn" onclick="initiateDownload('Habit Tracker', 'habit-tracker.pdf')">
+                        ⬇️ Download PDF
+                    </button>
+                </div>
+
+                <div class="resource-card">
+                    <h3>📝 Goal Planner PDF</h3>
+                    <p>Printable goal planner to map out your short-term and long-term goals clearly</p>
+                    <span class="resource-badge pdf-badge">PDF</span>
+                    <button class="download-btn" onclick="initiateDownload('Goal Planner PDF', 'goal-planner.pdf')">
+                        ⬇️ Download PDF
+                    </button>
+                </div>
+
+                <div class="resource-card">
+                    <h3>📈 Excel Goal Planner</h3>
+                    <p>Digital Excel version of the goal planner — track progress, deadlines and milestones</p>
+                    <span class="resource-badge excel-badge">Excel</span>
+                    <button class="download-btn" onclick="initiateDownload('Excel Goal Planner', 'goal-planner.xlsx')">
+                        ⬇️ Download Excel
+                    </button>
+                </div>
+                
+                <div class="resource-card">
+                    <h3>📊 Excel Habit Tracker</h3>
+                    <p>Build lasting habits with this powerful Excel tracker — log daily streaks and stay consistent</p>
+                    <span class="resource-badge excel-badge">Excel</span>
+                    <button class="download-btn" onclick="initiateDownload('Excel Habit Tracker', 'habit-tracker.xlsx')">
+                        ⬇️ Download Excel
+                    </button>
+                </div>                
+
+
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2026 Spirogyraplan - Swapnil Baranwal | Made with ❤️ and 🌈</p>
+        </footer>
+    </div>
+
+    <script src="../js/festival.js"></script>
+    <script src="../js/cursor.js"></script>
+    <script>
+        // --- CONFIGURATION ---
+        const EMAILJS_PUBLIC_KEY = "4Djc2qMVBV-2ceV2r";
+        const EMAILJS_SERVICE_ID = "Biggerthansrk";
+        const EMAILJS_TEMPLATE_ID = "template_kbqthii";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyyGKLwy0lxY3GZ0r__p6bFJtfRxmPJEn4YLPfJoabYVPoXB7_iEHVAIqmJgDDt05GldA/exec";
+
+        // Initialize EmailJS immediately
+        (function(){
+            emailjs.init({
+                publicKey: EMAILJS_PUBLIC_KEY,
+            });
+        })();
+
+        // System Variables
+        let generatedOTP = '';
+        let userEmail = '';
+        let currentResource = '';
+        let currentFile = '';
+        let otpExpiry = null;
+        let timerInterval = null;
+        let resendTimerInterval = null;
+
+        // --- SESSION MANAGEMENT ---
+        function checkSession() {
+            const session = localStorage.getItem('downloadSession');
+            if (session) {
+                const sessionData = JSON.parse(session);
+                const now = new Date().getTime();
+                if (now < sessionData.expiry) {
+                    return true;
+                }
+                localStorage.removeItem('downloadSession');
+            }
+            return false;
+        }
+
+        function initiateDownload(resourceName, fileName) {
+            currentResource = resourceName;
+            currentFile = fileName;
+            
+            if (checkSession()) {
+                startDownload();
+                return;
+            }
+            openOTPModal();
+        }
+
+        // --- MODAL UI ---
+        function openOTPModal() {
+            document.getElementById('otpModal').classList.add('active');
+            resetModal();
+        }
+
+        function closeOTPModal() {
+            document.getElementById('otpModal').classList.remove('active');
+            resetModal();
+        }
+
+        function resetModal() {
+            showStep('emailStep');
+            document.getElementById('userEmail').value = '';
+            clearOTPInputs();
+            clearTimers();
+            document.getElementById('emailAlert').innerHTML = '';
+            document.getElementById('otpAlert').innerHTML = '';
+        }
+
+        function showStep(stepId) {
+            document.querySelectorAll('.otp-step').forEach(step => step.classList.remove('active'));
+            document.getElementById(stepId).classList.add('active');
+        }
+
+        // --- OTP LOGIC ---
+        function generateOTPCode() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        async function handleSendClick() {
+            const email = document.getElementById('userEmail').value.trim();
+            if (!email || !validateEmail(email)) {
+                showAlert('emailAlert', 'Please enter a valid email address', 'error');
+                return;
+            }
+            
+            userEmail = email;
+            await sendOTP(email);
+        }
+
+        async function sendOTP(email) {
+            generatedOTP = generateOTPCode();
+            otpExpiry = new Date().getTime() + (5 * 60 * 1000); // 5 mins
+
+            const btn = document.getElementById('sendOTPBtn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span>Sending...';
+
+            // Template params — covers common variable name variations
+            const templateParams = {
+                to_email:      email,
+                user_email:    email,
+                email:         email,
+                otp_code:      generatedOTP,
+                otp:           generatedOTP,
+                code:          generatedOTP,
+                resource_name: currentResource,
+                name:          email.split('@')[0]
+            };
+
+            try {
+                const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                console.log('✅ Email sent successfully:', response.status, response.text);
+
+                showAlert('emailAlert', 'Verification code sent! Check your inbox (and spam folder).', 'success');
+                document.getElementById('displayEmail').textContent = email;
+                
+                setTimeout(() => {
+                    showStep('otpStep');
+                    startOTPTimer();
+                    startResendTimer();
+                    focusFirstOTPInput();
+                }, 1000);
+
+            } catch (error) {
+                // Log the full error so we can diagnose the exact cause
+                console.error('❌ EmailJS Error:', error);
+                console.error('   Status:', error.status);
+                console.error('   Text:',   error.text);
+
+                let msg = 'Failed to send code. ';
+                if (error.status === 400) {
+                    msg += 'Template configuration error — check EmailJS template variables.';
+                } else if (error.status === 401 || error.status === 403) {
+                    msg += 'Authentication error — check your Public Key in EmailJS.';
+                } else if (error.status === 412) {
+                    msg += 'Gmail not connected properly in EmailJS.';
+                } else {
+                    msg += `Server Error (${error.status || 'unknown'}). Check console for details.`;
+                }
+                showAlert('emailAlert', msg, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        function resendOTP() {
+            document.getElementById('otpAlert').innerHTML = '';
+            document.getElementById('otpTimer').classList.remove('expired');
+            clearTimers();
+            sendOTP(userEmail); // Re-use the send logic
+        }
+
+        function verifyOTP() {
+            const enteredOTP = getEnteredOTP();
+            
+            if (enteredOTP.length !== 6) {
+                showAlert('otpAlert', 'Please enter the complete 6-digit code', 'error');
+                return;
+            }
+            
+            if (new Date().getTime() > otpExpiry) {
+                showAlert('otpAlert', 'Code has expired. Please request a new one.', 'error');
+                return;
+            }
+            
+            if (enteredOTP === generatedOTP) {
+                saveSession();
+                showSuccess();
+            } else {
+                showAlert('otpAlert', 'Invalid code. Please try again.', 'error');
+                clearOTPInputs();
+            }
+        }
+
+        // --- UTILS ---
+        function getEnteredOTP() {
+            const inputs = document.querySelectorAll('.otp-digit');
+            return Array.from(inputs).map(input => input.value).join('');
+        }
+
+        function clearOTPInputs() {
+            document.querySelectorAll('.otp-digit').forEach(input => input.value = '');
+            focusFirstOTPInput();
+        }
+
+        function focusFirstOTPInput() {
+            setTimeout(() => {
+                const first = document.querySelector('.otp-digit');
+                if(first) first.focus();
+            }, 100);
+        }
+
+        function saveSession() {
+            const session = {
+                email: userEmail,
+                expiry: new Date().getTime() + (30 * 24 * 60 * 60 * 1000) // 30 days
+            };
+            localStorage.setItem('downloadSession', JSON.stringify(session));
+        }
+
+        function showSuccess() {
+            clearTimers();
+            document.getElementById('resourceName').textContent = currentResource;
+            showStep('successStep');
+            
+            setTimeout(() => {
+                startDownload();
+            }, 1000);
+        }
+
+        function startDownload() {
+            console.log(`📥 Downloading: ${currentFile}`);
+            logDownload();
+
+            const link = document.createElement('a');
+            link.href = '../resouces/' + encodeURIComponent(currentFile);
+            link.download = currentFile;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function logDownload() {
+            const downloadLog = {
+                email: userEmail,
+                resource: currentResource,
+                file: currentFile,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Using 'no-cors' mode is required for client-side Google Apps Script calls
+            // This means we won't see a success response, but the data will post.
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(downloadLog)
+            }).then(() => {
+                console.log('✅ Log request sent to Google Sheets');
+            }).catch((error) => {
+                console.error('❌ Error logging download:', error);
+            });
+        }
+
+        function startOTPTimer() {
+            timerInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const timeLeft = otpExpiry - now;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timerDisplay').textContent = '00:00';
+                    document.getElementById('otpTimer').classList.add('expired');
+                    showAlert('otpAlert', 'Code expired. Please request a new one.', 'error');
+                    return;
+                }
+                
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                document.getElementById('timerDisplay').textContent = 
+                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function startResendTimer() {
+            let timeLeft = 60;
+            const resendBtn = document.getElementById('resendBtn');
+            const resendTimer = document.getElementById('resendTimer');
+            
+            resendBtn.disabled = true;
+            
+            resendTimerInterval = setInterval(() => {
+                timeLeft--;
+                resendTimer.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(resendTimerInterval);
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = 'Resend Code';
+                }
+            }, 1000);
+        }
+
+        function clearTimers() {
+            if (timerInterval) clearInterval(timerInterval);
+            if (resendTimerInterval) clearInterval(resendTimerInterval);
+        }
+
+        function showAlert(elementId, message, type) {
+            const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+            document.getElementById(elementId).innerHTML = 
+                `<div class="alert ${alertClass}">${message}</div>`;
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // --- EVENT LISTENERS ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const otpInputs = document.querySelectorAll('.otp-digit');
+            
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', function(e) {
+                    if (this.value.length === 1 && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                });
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && !this.value && index > 0) {
+                        otpInputs[index - 1].focus();
+                    }
+                });
+                
+                input.addEventListener('keypress', function(e) {
+                    if (!/[0-9]/.test(e.key)) e.preventDefault();
+                });
+                
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pasteData = e.clipboardData.getData('text').slice(0, 6);
+                    if (/^\d{6}$/.test(pasteData)) {
+                        pasteData.split('').forEach((char, i) => {
+                            if (otpInputs[i]) otpInputs[i].value = char;
+                        });
+                        if(otpInputs[5]) otpInputs[5].focus();
+                    }
+                });
+            });
+        });
+
+        // Close modal on outside click
+        document.getElementById('otpModal').addEventListener('click', function(e) {
+            if (e.target === this) closeOTPModal();
+        });
+    </script>
+</body>
+</html>
