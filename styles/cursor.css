@@ -1,5 +1,5 @@
 .custom-cursor {
-    display: none;
+    display: none !important;
 }
 
 .cursor-trail {
