@@ -182,7 +182,7 @@ const festivals = [
 {
     name: "Baisakhi",
     emoji: "🌾",
-    start: new Date(2026, 3, 14),
+    start: new Date(2026, 3, 13),
     end: new Date(2026, 3, 14),
     colors: ["#FFD700", "#FF6600"],
     particles: ["🌾", "💃", "🥁", "🙏"]

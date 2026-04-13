@@ -628,3 +628,24 @@ footer {
         font-size: 1.8em;
     }
 }
+.highlight-card {
+    border: 2px solid #fff;
+    animation: pulse-glow 2s infinite;
+    transform: scale(1.02);
+}
+
+.highlight-card:hover {
+    transform: scale(1.05) translateY(-10px);
+}
+
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 105, 180, 0.6), 0 8px 30px rgba(0,0,0,0.15);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(255, 105, 180, 0), 0 8px 30px rgba(0,0,0,0.15);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 105, 180, 0), 0 8px 30px rgba(0,0,0,0.15);
+    }
+}
