@@ -429,71 +429,57 @@ const festivals = [
 }
 ];
 
+// Determine Current Festival (replaced by the definitive version below)
+
 // Determine Current Festival
-function getCurrentFestival() {
-    const now = new Date();
-    for (let festival of festivals) {
-        if (now >= festival.start && now <= festival.end) {
-            return festival;
-        }
-    }
-    return null;
-}
-
-// Initialize Festival Popup
-// Festival configuration with dates
-const festival = [
-    // Valentine's Week
-    { name: "Rose Day", emoji: "🌹", start: new Date(2026, 1, 7), end: new Date(2026, 1, 7) },
-    { name: "Propose Day", emoji: "💍", start: new Date(2026, 1, 8), end: new Date(2026, 1, 8) },
-    { name: "Chocolate Day", emoji: "🍫", start: new Date(2026, 1, 9), end: new Date(2026, 1, 9) },
-    { name: "Teddy Day", emoji: "🧸", start: new Date(2026, 1, 10), end: new Date(2026, 1, 10) },
-    { name: "Promise Day", emoji: "🤝", start: new Date(2026, 1, 11), end: new Date(2026, 1, 11) },
-    { name: "Hug Day", emoji: "🤗", start: new Date(2026, 1, 12), end: new Date(2026, 1, 12) },
-    { name: "Kiss Day", emoji: "💋", start: new Date(2026, 1, 13), end: new Date(2026, 1, 13) },
-    { name: "Valentine's Day", emoji: "❤️", start: new Date(2026, 1, 14), end: new Date(2026, 1, 14) },
-    
-    // Major Indian Festivals
-    { name: "Republic Day", emoji: "🇮🇳", start: new Date(2026, 0, 26), end: new Date(2026, 0, 26) },
-    { name: "Holi", emoji: "🎨", start: new Date(2026, 2, 14), end: new Date(2026, 2, 14) },
-    { name: "Diwali", emoji: "🪔", start: new Date(2026, 10, 8), end: new Date(2026, 10, 10) },
-    { name: "Raksha Bandhan", emoji: "🎀", start: new Date(2026, 7, 9), end: new Date(2026, 7, 9) },
-    { name: "Janmashtami", emoji: "🦚", start: new Date(2026, 7, 16), end: new Date(2026, 7, 16) },
-    { name: "Ganesh Chaturthi", emoji: "🐘", start: new Date(2026, 8, 2), end: new Date(2026, 8, 11) },
-    { name: "Chaitra Navaratri", emoji: "🪷", start: new Date(2026, 2, 19), end: new Date(2026, 2, 28) },
-    { name: "Sharad Navaratri", emoji: "🪷", start: new Date(2026, 9, 11), end: new Date(2026, 9, 20) },
-    { name: "Dussehra", emoji: "🏹", start: new Date(2026, 9, 22), end: new Date(2026, 9, 22) },
-    { name: "Independence Day", emoji: "🇮🇳", start: new Date(2026, 7, 15), end: new Date(2026, 7, 15) },
-    
-    // International Occasions
-    { name: "New Year", emoji: "🎆", start: new Date(2026, 0, 1), end: new Date(2026, 0, 1) },
-    { name: "Easter", emoji: "🐰", start: new Date(2026, 3, 5), end: new Date(2026, 3, 5) },
-    { name: "Mother's Day", emoji: "👩‍👧", start: new Date(2026, 4, 10), end: new Date(2026, 4, 10) },
-    { name: "Father's Day", emoji: "👨‍👧", start: new Date(2026, 5, 21), end: new Date(2026, 5, 21) },
-    { name: "Halloween", emoji: "🎃", start: new Date(2026, 9, 31), end: new Date(2026, 9, 31) },
-    { name: "Thanksgiving", emoji: "🦃", start: new Date(2026, 10, 26), end: new Date(2026, 10, 26) },
-    { name: "Christmas", emoji: "🎄", start: new Date(2026, 11, 24), end: new Date(2026, 11, 26) },
-    { name: "New Year's Eve", emoji: "🎊", start: new Date(2026, 11, 31), end: new Date(2026, 11, 31) },
-    
-    // Other Special Days
-    { name: "Women's Day", emoji: "👩", start: new Date(2026, 2, 8), end: new Date(2026, 2, 8) },
-    { name: "Earth Day", emoji: "🌍", start: new Date(2026, 3, 22), end: new Date(2026, 3, 22) },
-    { name: "World Environment Day", emoji: "🌱", start: new Date(2026, 5, 5), end: new Date(2026, 5, 5) },
-    { name: "Friendship Day", emoji: "👫", start: new Date(2026, 7, 2), end: new Date(2026, 7, 2) },
-];
-
+// Returns the active festival for today, or the most recently passed festival as fallback
 function getCurrentFestival() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    return festivals.find(festival => {
-        const start = new Date(festival.start);
-        const end = new Date(festival.end);
+
+    // 1. Look for a festival whose range includes today
+    for (const fest of festivals) {
+        const start = new Date(fest.start);
+        const end = new Date(fest.end);
         start.setHours(0, 0, 0, 0);
         end.setHours(23, 59, 59, 999);
-        
-        return today >= start && today <= end;
-    });
+        if (today >= start && today <= end) {
+            return fest;
+        }
+    }
+
+    // 2. Fallback: return the most recently passed festival
+    let closest = null;
+    let closestDiff = Infinity;
+    for (const fest of festivals) {
+        const end = new Date(fest.end);
+        end.setHours(23, 59, 59, 999);
+        if (end < today) {
+            const diff = today - end;
+            if (diff < closestDiff) {
+                closestDiff = diff;
+                closest = fest;
+            }
+        }
+    }
+    // 3. If nothing has passed yet (very start of year), return next upcoming festival
+    if (!closest) {
+        let nextFest = null;
+        let nextDiff = Infinity;
+        for (const fest of festivals) {
+            const start = new Date(fest.start);
+            start.setHours(0, 0, 0, 0);
+            if (start > today) {
+                const diff = start - today;
+                if (diff < nextDiff) {
+                    nextDiff = diff;
+                    nextFest = fest;
+                }
+            }
+        }
+        return nextFest;
+    }
+    return closest;
 }
 
 function initFestivalPopup() {
